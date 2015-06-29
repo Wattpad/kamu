@@ -9,7 +9,7 @@ set :keep_releases, 5
 
 ssh_options[:keys] = "~/.ssh/wattpad-production.pem"
 
-role :service_comment, "ec2-54-234-54-212.compute-1.amazonaws.com"  # kamu-production-1
+role :kamu, "ec2-54-234-54-212.compute-1.amazonaws.com"  # kamu-production-1
 
 default_environment[:GIT_SSH] = '/root/ssh-git.sh'
 
@@ -79,7 +79,7 @@ namespace :docker do
 
   task :switch_over do
     route_traffic
-    stop_and_remove_old_containers  
+    stop_and_remove_old_containers
   end
 
   desc "Tail production log files"
