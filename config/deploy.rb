@@ -7,11 +7,17 @@ set :scm, :git
 set :user, "root"
 set :keep_releases, 5
 
-ssh_options[:keys] = "~/.ssh/wattpad-production.pem"
-
 role :kamu, "ec2-54-234-54-212.compute-1.amazonaws.com"  # kamu-production-1
 
-default_environment[:GIT_SSH] = '/root/ssh-git.sh'
+task :set_git_ssh do
+  default_environment[:GIT_SSH] = '/root/ssh-git.sh'
+end
+
+desc "Performs a deploy remotely from the jump server"
+task :remote_deploy, :hosts => "wattpad.com" do
+  set :user, "ubuntu"
+  run "ssh-agent bash -c 'ssh-add /home/ubuntu/.ssh/kamu; cd /home/ubuntu/kamu; git checkout .; git clean -f; git pull origin master; cap deploy'"
+end
 
 namespace :docker do
 
@@ -96,6 +102,7 @@ namespace :docker do
 
 end
 
+before "deploy", "set_git_ssh"
 after "deploy:update_code", "docker:update"
 after "deploy:update", "docker:switch_over"
 after "deploy", "deploy:cleanup", 'docker:tail_logs'
