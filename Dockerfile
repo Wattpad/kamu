@@ -1,7 +1,10 @@
 FROM alpine
 
 # Update apt repo
-RUN apk --update add nodejs
+RUN apk add --update \
+	nodejs \
+	&& rm -rf /var/cache/apk/*
+
 
 # add the code to the image and install deps
 RUN mkdir -p /mnt/log /var/kamu/releases && ln -sf /var/kamu/releases/current /var/kamu/current
