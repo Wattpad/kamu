@@ -1,8 +1,4 @@
-FROM ubuntu:trusty
-
-# Update apt repo
-RUN apt-get update
-RUN apt-get install -y nodejs npm
+FROM mhart/alpine-node
 
 # add the code to the image and install deps
 RUN mkdir -p /mnt/log /var/kamu/releases && ln -sf /var/kamu/releases/current /var/kamu/current
