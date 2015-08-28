@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine
+FROM alpine
 
 # Update apt repo
 RUN apk --update add nodejs
