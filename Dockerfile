@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.2
 
 # Update apt repo
 RUN apk add --update \
