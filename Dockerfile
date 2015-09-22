@@ -1,8 +1,10 @@
 FROM alpine:3.2
 
 # Update apt repo
-RUN apk add --update \
-	nodejs 
+RUN apk add --update add virtual \
+	nodejs \
+	sharp-run-deps \
+	sharp-build-deps 
 
 # Install dependencies
 RUN apk --update add --virtual graphicsmagick
