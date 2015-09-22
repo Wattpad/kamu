@@ -52,6 +52,7 @@ ENV LIBRARY_PATH /usr/local/lib
 # add the code to the image and install deps
 RUN mkdir -p /mnt/log /var/kamu/releases && ln -sf /var/kamu/releases/current /var/kamu/current
 ADD . /var/kamu/releases/current
+RUN rm /var/kamu/releases/current/node_modules/sharp
 RUN cd /var/kamu/releases/current; npm install 
 RUN npm install -g pm2
 # link nodejs to node so pm2 can find it
