@@ -5,6 +5,8 @@ RUN apk add --update \
 	nodejs 
 
 # Install dependencies
+RUN apk --update add --virtual graphicsmagick
+
 RUN apk --update add --virtual build-deps \
 	gcc g++ make libc-dev \
 	curl \
@@ -30,8 +32,8 @@ RUN apk --update add --virtual run-deps \
 RUN rm -rf /var/cache/apk/*
 
 WORKDIR /tmp
-ENV LIBVIPS_VERSION_MAJOR 8
-ENV LIBVIPS_VERSION_MINOR 0
+ENV LIBVIPS_VERSION_MAJOR 7
+ENV LIBVIPS_VERSION_MINOR 42
 ENV LIBVIPS_VERSION_PATCH 2
 
 # Build libvips
@@ -39,7 +41,7 @@ RUN LIBVIPS_VERSION=${LIBVIPS_VERSION_MAJOR}.${LIBVIPS_VERSION_MINOR}.${LIBVIPS_
   curl -O http://www.vips.ecs.soton.ac.uk/supported/${LIBVIPS_VERSION_MAJOR}.${LIBVIPS_VERSION_MINOR}/vips-${LIBVIPS_VERSION}.tar.gz && \
   tar zvxf vips-${LIBVIPS_VERSION}.tar.gz && \
   cd vips-${LIBVIPS_VERSION} && \
-  ./configure --without-python --without-gsf && \
+  ./configure --without-python --without-gsf  --with-webp --with-graphicsmagick && \
   make && \
   make install
 ENV CPATH /usr/local/include
