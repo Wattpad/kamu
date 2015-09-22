@@ -1,8 +1,7 @@
 FROM alpine:3.2
 
 # Update apt repo
-RUN apk --update add virtual \
-	nodejs \
+RUN apk --update add --virtual nodejs \
 	sharp-run-deps \
 	sharp-build-deps 
 
