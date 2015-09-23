@@ -49,7 +49,7 @@ RUN mkdir -p /mnt/log /var/kamu/releases && ln -sf /var/kamu/releases/current /v
 ADD . /var/kamu/releases/current
 RUN rm -rf /var/kamu/releases/current/node_modules/sharp
 RUN git clone https://github.com/lovell/sharp.git /var/kamu/releases/current/node_modules/sharp
-RUN cd /var/kamu/releases/current/node_modules/sharp; npm install
+RUN cd /var/kamu/releases/current/node_modules/sharp; npm install --unsafe-perm
 RUN cd /var/kamu/releases/current; npm install 
 RUN npm install -g pm2
 # link nodejs to node so pm2 can find it
