@@ -1,57 +1,54 @@
 FROM alpine:3.2
 
-# Update apt repo
-RUN apk --update add --virtual nodejs \
-	sharp-run-deps \
-	sharp-build-deps 
+RUN apk upgrade --update
 
-# Install dependencies
-RUN apk --update add --virtual graphicsmagick
+RUN apk add nodejs \
+  python \
+  git \
+  gcc g++ make libc-dev \
+  curl \
+  automake \
+  libtool \
+  tar \
+  gettext \
+  glib-dev \
+  libpng-dev \
+  libwebp-dev \
+  libexif-dev \
+  libxml2-dev \
+  libjpeg-turbo-dev \
+  glib \
+  libpng \
+  libwebp \
+  libexif \
+  libxml2 \
+  libjpeg-turbo \
+  gtk-doc \
+  gobject-introspection-dev \
+  autoconf \
+  swig
 
-RUN apk --update add --virtual build-deps \
-	gcc g++ make libc-dev \
-	curl \
-	automake \
-	libtool \
-	tar \
-	gettext
-RUN apk --update add --virtual dev-deps \
-	glib-dev \
-	libpng-dev \
-	libwebp-dev \
-	libexif-dev \
-	libxml2-dev \
-	libjpeg-turbo-dev
-RUN apk --update add --virtual run-deps \
-	glib \
-	libpng \
-	libwebp \
-	libexif \
-	libxml2 \
-	libjpeg-turbo
+#RUN apk add graphicsmagick
 
 RUN rm -rf /var/cache/apk/*
 
-WORKDIR /tmp
-ENV LIBVIPS_VERSION_MAJOR 8
-ENV LIBVIPS_VERSION_MINOR 0
-ENV LIBVIPS_VERSION_PATCH 2
-
 # Build libvips
-RUN LIBVIPS_VERSION=${LIBVIPS_VERSION_MAJOR}.${LIBVIPS_VERSION_MINOR}.${LIBVIPS_VERSION_PATCH} && \
-  curl -O http://www.vips.ecs.soton.ac.uk/supported/${LIBVIPS_VERSION_MAJOR}.${LIBVIPS_VERSION_MINOR}/vips-${LIBVIPS_VERSION}.tar.gz && \
-  tar zvxf vips-${LIBVIPS_VERSION}.tar.gz && \
-  cd vips-${LIBVIPS_VERSION} && \
-  ./configure --without-python --without-gsf  --with-webp --with-graphicsmagick && \
+WORKDIR /tmp
+RUN git clone http://github.com/jcupitt/libvips.git && cd libvips && \
+  ./bootstrap.sh && \
+  ./configure --without-python --without-gsf --with-webp --with-graphics && \
   make && \
   make install
 ENV CPATH /usr/local/include
 ENV LIBRARY_PATH /usr/local/lib
 
+# Install sharp
+
 # add the code to the image and install deps
 RUN mkdir -p /mnt/log /var/kamu/releases && ln -sf /var/kamu/releases/current /var/kamu/current
 ADD . /var/kamu/releases/current
 RUN rm -rf /var/kamu/releases/current/node_modules/sharp
+RUN git clone https://github.com/lovell/sharp.git /var/kamu/releases/current/node_modules/sharp
 RUN cd /var/kamu/releases/current; npm install 
 RUN npm install -g pm2
 # link nodejs to node so pm2 can find it
