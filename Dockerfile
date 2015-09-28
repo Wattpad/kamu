@@ -1,57 +1,72 @@
-FROM alpine:3.2
+FROM ubuntu:14.04
 
-RUN apk upgrade --update
-
-RUN apk add nodejs \
-  python \
-  git \
-  gcc g++ make libc-dev \
-  curl \
+RUN apt-get update -y
+RUN apt-get install -y \
+  pkg-config \
   automake \
-  libtool \
-  tar \
+  build-essential \
+  curl \
+  gobject-introspection \
+  gtk-doc-tools \
+  fontconfig \
   gettext \
-  glib-dev \
-  libpng-dev \
+  swig \
+  libglib2.0-dev \
+  libjpeg-turbo8-dev \
+  libpng12-dev \
   libwebp-dev \
+  libtiff5-dev \
   libexif-dev \
   libxml2-dev \
-  libjpeg-turbo-dev \
-  glib \
-  libpng \
-  libwebp \
-  libexif \
-  libxml2 \
-  libjpeg-turbo \
-  gtk-doc \
-  gobject-introspection-dev \
-  autoconf \
-  swig
+  libfftw3-dev \
+  libmagickwand-dev \
+  libmagickcore-dev \
+  libgsf-1-dev \
+  liblcms2-dev \
+  liborc-0.4-dev \
+  liblcms2-2 \
+  liblcms-utils \
+  libpango1.0-dev\
+  git \
+  nodejs \
+  npm 
 
-#RUN apk add graphicsmagick
-
-RUN rm -rf /var/cache/apk/*
+# Fix link to node executable
+RUN sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 # Build libvips
 WORKDIR /tmp
 RUN git clone http://github.com/jcupitt/libvips.git && cd libvips && \
   ./bootstrap.sh && \
-  ./configure --without-python --without-gsf --with-webp --with-graphics && \
+  ./configure --enable-debug=no \
+    --disable-static \
+    --disable-docs \
+    --enable-cxx=yes \
+    --with-cfitsio \
+    --with-graphicsmagick \
+    --with-magickpackage=GraphicsMagick \
+    --with-openslide \
+    --with-webp \
+    --without-python \
+    --without-gsf && \
   make && \
   make install
 ENV CPATH /usr/local/include
 ENV LIBRARY_PATH /usr/local/lib
 
-# Install sharp
-
 # add the code to the image and install deps
 RUN mkdir -p /mnt/log /var/kamu/releases && ln -sf /var/kamu/releases/current /var/kamu/current
 ADD . /var/kamu/releases/current
+
+# Install sharp manually from master
 RUN rm -rf /var/kamu/releases/current/node_modules/sharp
 RUN git clone https://github.com/lovell/sharp.git /var/kamu/releases/current/node_modules/sharp
+
+# finish install of nodejs deps
 RUN cd /var/kamu/releases/current/node_modules/sharp; npm install --unsafe-perm
 RUN cd /var/kamu/releases/current; npm install 
 RUN npm install -g pm2
+
 # link nodejs to node so pm2 can find it
 RUN ln -s /usr/bin/nodejs /usr/local/bin/node
 
@@ -60,3 +75,4 @@ EXPOSE 8081
 
 # Run Kamu
 CMD ["pm2", "start", "/var/kamu/releases/current/index.js", "-i", "0", "--no-daemon"]
+
