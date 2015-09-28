@@ -39,7 +39,7 @@ WORKDIR /tmp
 RUN git clone http://github.com/jcupitt/libvips.git && cd libvips && \
   ./bootstrap.sh && \
   ./configure --enable-debug=no \
-    --disable-static \
+#    --disable-static \
     --disable-docs \
     --enable-cxx=yes \
     --with-cfitsio \
