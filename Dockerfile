@@ -51,6 +51,9 @@ RUN git clone http://github.com/jcupitt/libvips.git && cd libvips && \
     --without-gsf && \
   make && \
   make install
+
+RUN ldconfig
+
 ENV CPATH /usr/local/include
 ENV LIBRARY_PATH /usr/local/lib
 
