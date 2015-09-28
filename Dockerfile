@@ -77,5 +77,5 @@ RUN ln -s /usr/bin/nodejs /usr/local/bin/node
 EXPOSE 8081
 
 # Run Kamu
-CMD ["pm2", "start", "/var/kamu/releases/current/index.js", "-i", "0", "--no-daemon"]
+CMD ["pm2", "start", "/var/kamu/releases/current/index.js", "-i", "0", "--no-daemon", "--no-color"]
 
