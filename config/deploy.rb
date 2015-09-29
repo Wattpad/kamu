@@ -72,7 +72,7 @@ namespace :docker do
   end
 
   task :run_container do
-    run "docker run --env-file=/var/#{container_prefix}/shared/env.list --tty --detach --name=#{container_name} #{image_name}"
+    run "docker run --env-file=/var/#{container_prefix}/shared/env.list --tty --detach --restart=always --name=#{container_name} #{image_name}"
   end
 
   task :route_traffic do
