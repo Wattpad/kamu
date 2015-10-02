@@ -12,9 +12,8 @@ exports.version         = meta.version;
 exports.proxyKey        = process.env.KAMU_KEY || '0xF6D61696E2E636F6D2F736';
 
 
-// can be set to: 'debug', 'enabled', or 'disabled'
+// can be set to: 'disabled' (no logs), 'debug' (all logs), 'dev' (warns and errors), 'prod' (only errors)
 exports.log             = process.env.KAMU_LOGGING || 'disabled';
-
 
 // serer host
 exports.host            = process.env.KAMU_HOST || 'https://www.media-proxy.com';
@@ -29,8 +28,8 @@ exports.proxyAgent      = process.env.KAMU_AGENT || ( 'kamu.asset.proxy-' + meta
 exports.maxRedirects    = parseInt( ( process.env.KAMU_REDIRECTS || 4 ), 10 );
 // maximum waiting time for a media asset response (in seconds)
 exports.socketTimeout   = parseInt( ( process.env.KAMU_TIMEOUT || 10 ), 10 );
-// true - will keep the connection open | false will close the connection for every request
-exports.keepAlive       = !!process.env.KAMU_KEEP_ALIVE; // false by default
+// true - will keep the connection open | false (default value) will close the connection for every request
+exports.keepAlive       = process.env.KAMU_KEEP_ALIVE ? process.env.KAMU_KEEP_ALIVE.toLowerCase() === 'true' : false;
 
 
 // list of domains that are allowed to get timings requests - cross-domain timings
@@ -51,7 +50,8 @@ exports.transformTypes = [
   "image/tiff"
 ];
 // do not enlarge the image if its dimentions are less than what is required
-exports.transformWithoutEnlargement = true;
+exports.transformWithoutEnlargement = process.env.KAMU_TRANSFORM_WITHOUT_ENLARGEMENT ? process.env.KAMU_TRANSFORM_WITHOUT_ENLARGEMENT.toLowerCase() === 'true' : true;
+
 // output format supported
 exports.transformFormats = [ 'jpeg', 'png', 'webp', 'raw' ];
 // pre-defined rotation angles
@@ -64,8 +64,7 @@ exports.transformOptions = [ 's', 'x', 'r', 'm', 'q', 'f', 'w', 'h', 'xw', 'xh',
 
 // by default it will redirec the request to the original url without the transformation parameters
 // in case the transformation fails
-exports.transformRedirectOnError = process.env.KAMU_TRANS_REDIRECT_ONERROR &&
-                                   process.env.KAMU_TRANS_REDIRECT_ONERROR.toLowercase() === 'false' ? false : true;
+exports.transformRedirectOnError = process.env.KAMU_TRANS_REDIRECT_ONERROR ? process.env.KAMU_TRANS_REDIRECT_ONERROR.toLowerCase() === 'true' : true;
 
 // default safe headers to be used by default on responses
 exports.defaultHeaders  = {

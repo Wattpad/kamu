@@ -3,14 +3,14 @@
 require( '../../common' );
 
 
-describe( 'connection-status module', function() {
+describe( 'connection', function() {
   var connStatus;
 
   before( function() {
-    connStatus = rewire( '../proxy/connection-status' );
+    connStatus = rewire( '../src/connection' );
   } );
 
-  describe( 'start method', function() {
+  describe( '#start', function() {
     var bkpTotalConn,
         bkpCurrentConn,
         bkpStartedAt;
@@ -45,7 +45,7 @@ describe( 'connection-status module', function() {
     } );
   } );
 
-  describe( 'open method', function() {
+  describe( '#open', function() {
     var bkpTotalConn,
         bkpCurrentConn,
         bkpStartedAt;
@@ -83,7 +83,7 @@ describe( 'connection-status module', function() {
     } );
   } );
 
-  describe( 'close method', function() {
+  describe( '#close', function() {
     var bkpTotalConn,
         bkpCurrentConn,
         bkpStartedAt;
@@ -131,7 +131,7 @@ describe( 'connection-status module', function() {
     } );
   } );
 
-  describe( 'toString method', function() {
+  describe( '#toString', function() {
     var bkpTotalConn,
         bkpCurrentConn,
         bkpStartedAt;

@@ -4,13 +4,13 @@ require( '../../common' );
 
 var path = require( 'path' );
 
-describe( 'config module', function() {
+describe( 'config', function() {
   var packageInfo,
       config;
 
   before( function() {
     packageInfo = require( path.resolve( __dirname, '../../../', 'package.json' ) );
-    config = rewire( '../proxy/config' );
+    config = rewire( '../src/config' );
   } );
 
   it( 'should expose name as the app package name' ,function() {
@@ -34,7 +34,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment key', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.proxyKey ).to.be.equal( 'custom key' );
     } );
   } );
@@ -49,7 +49,7 @@ describe( 'config module', function() {
     var configCustom;
 
     before( function() {
-      process.env.KAMU_LOGGING = 'enabled';
+      process.env.KAMU_LOGGING = 'prod';
     } );
 
     after( function() {
@@ -58,8 +58,8 @@ describe( 'config module', function() {
 
     it( 'should expose the environment logging', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
-      expect( configCustom.log ).to.be.equal( 'enabled' );
+      configCustom = rewire( '../src/config' );
+      expect( configCustom.log ).to.be.equal( 'prod' );
     } );
 
   } );
@@ -83,7 +83,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment host', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.host ).to.be.equal( 'custom host' );
     } );
   } );
@@ -107,7 +107,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment port', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.port ).to.be.equal( 9999 );
     } );
   } );
@@ -131,7 +131,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment proxy agent', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.proxyAgent ).to.be.equal( 'custom agent' );
     } );
   } );
@@ -155,7 +155,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment maximum redirects', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.maxRedirects ).to.be.equal( 999 );
     } );
   } );
@@ -179,7 +179,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment maximum waiting time', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.socketTimeout ).to.be.equal( 999 );
     } );
   } );
@@ -203,7 +203,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment keep alive', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.keepAlive ).to.be.equal( true );
     } );
   } );
@@ -227,7 +227,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment timing origin', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.timingOrigin ).to.be.equal( 'custom timings' );
     } );
   } );
@@ -251,7 +251,7 @@ describe( 'config module', function() {
 
     it( 'should expose the environment length limit', function() {
       // using rewire to avoid getting the cached module
-      configCustom = rewire( '../proxy/config' );
+      configCustom = rewire( '../src/config' );
       expect( configCustom.lengthLimit ).to.be.equal( 999999999 );
     } );
   } );
@@ -266,6 +266,79 @@ describe( 'config module', function() {
     var types = require( path.resolve( __dirname, '../../../', 'mime-types.json' ) );
     expect( config.validTypes ).to.be.deep.equal( types );
     expect( config.validTypes ).to.be.an.array;
+  } );
+
+  it( 'should expose valid transform content types', function() {
+    expect( config.transformTypes ).to.be.an.array;
+    expect( config.transformTypes.length ).to.be.equal( 5 );
+  } );
+
+  describe( 'when environment transform without enlargement is defined', function() {
+    var configCustom;
+
+    before( function() {
+      process.env.KAMU_TRANSFORM_WITHOUT_ENLARGEMENT = false;
+    } );
+
+    after( function() {
+      process.env.KAMU_TRANSFORM_WITHOUT_ENLARGEMENT = void 0;
+    } );
+
+    it( 'should expose the environment value', function() {
+      // using rewire to avoid getting the cached module
+      configCustom = rewire( '../src/config' );
+      expect( configCustom.transformWithoutEnlargement ).to.be.equal( false );
+    } );
+  } );
+
+  describe( 'when environment transform without enlargement is NOT defined', function() {
+    it( 'should expose the default transform without enlargement', function() {
+      expect( config.transformWithoutEnlargement ).to.be.equal( true );
+    } );
+  } );
+
+  it( 'should expose the valid transform formats', function() {
+    expect( config.transformFormats ).to.be.an.array;
+    expect( config.transformFormats.length ).to.be.equal( 4 );
+  } );
+
+  it( 'should expose the valid transform angles', function() {
+    expect( config.transformAngles ).to.be.an.array;
+    expect( config.transformAngles.length ).to.be.equal( 4 );
+  } );
+
+  it( 'should expose the valid transform gravity', function() {
+    expect( config.transformGravity ).to.be.an.array;
+    expect( config.transformGravity.length ).to.be.equal( 6 );
+  } );
+
+  it( 'should expose the valid transform options', function() {
+    expect( config.transformOptions ).to.be.an.array;
+    expect( config.transformOptions.length ).to.be.equal( 13 );
+  } )
+
+  describe( 'when environment transform redirect on error is defined', function() {
+    var configCustom;
+
+    before( function() {
+      process.env.KAMU_TRANS_REDIRECT_ONERROR = false;
+    } );
+
+    after( function() {
+      process.env.KAMU_TRANS_REDIRECT_ONERROR = void 0;
+    } );
+
+    it( 'should expose the environment transform redirect on error', function() {
+      // using rewire to avoid getting the cached module
+      configCustom = rewire( '../src/config' );
+      expect( configCustom.transformRedirectOnError ).to.be.equal( false );
+    } );
+  } );
+
+  describe( 'when environment transform redirect on error is NOT defined', function() {
+    it( 'should expose the default transform redirect on error', function() {
+      expect( config.transformRedirectOnError ).to.be.equal( true );
+    } );
   } );
 
   it( 'should expose the default safe headers', function() {

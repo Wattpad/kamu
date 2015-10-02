@@ -2,16 +2,15 @@
 
 require( '../../common' );
 
-
-describe( 'log module', function() {
+describe( 'log', function() {
   var log;
 
   before( function() {
-    log = rewire( '../proxy/log' );
-    log.__set__( 'console', { log: sinon.stub(), error: sinon.stub() } );
+    log = rewire( '../src/log' );
+    log.__set__( 'console', { log: sinon.stub(), error: sinon.stub(), warn: sinon.stub() } );
   } );
 
-  describe( 'debug method', function() {
+  describe( '#debug', function() {
     describe( 'when config log is set to debug', function() {
       var bkpLogConfig;
 
@@ -52,13 +51,13 @@ describe( 'log module', function() {
     } );
   } );
 
-  describe( 'error method', function() {
-    describe( 'when config log is NOT disabled', function() {
+  describe( '#error', function() {
+    describe( 'when config log is prod', function() {
       var bkpLogConfig;
 
       before( function() {
         bkpLogConfig = log.__get__( 'config' ).log;
-        log.__get__( 'config' ).log = 'enabled';
+        log.__get__( 'config' ).log = 'prod';
       } );
 
       after( function() {
@@ -92,4 +91,46 @@ describe( 'log module', function() {
       } );
     } );
   } );
+
+  describe( '#warn', function() {
+    describe( 'when config log is dev', function() {
+      var bkpLogConfig;
+
+      before( function() {
+        bkpLogConfig = log.__get__( 'config' ).log;
+        log.__get__( 'config' ).log = 'dev';
+      } );
+
+      after( function() {
+        log.__get__( 'config' ).log = bkpLogConfig;
+      } );
+
+      it( 'should log the message', function() {
+        log.__get__( 'console' ).warn.reset();
+        log.warn( 'warn message' );
+        expect( log.__get__( 'console' ).warn ).to.have.been.calledOnce;
+        expect( log.__get__( 'console' ).warn.getCall( 0 ).args[ 0 ] ).to.contain( 'warn message' );
+      } );
+    } );
+
+    describe( 'when config log is prod', function() {
+      var bkpLogConfig;
+
+      before( function() {
+        bkpLogConfig = log.__get__( 'config' ).log;
+        log.__get__( 'config' ).log = 'prod';
+      } );
+
+      after( function() {
+        log.__get__( 'config' ).log = bkpLogConfig;
+      } );
+
+      it( 'should NOT log the message', function() {
+        log.__get__( 'console' ).warn.reset();
+        log.warn( 'warn message' );
+        expect( log.__get__( 'console' ).warn ).not.to.have.been.called;
+      } );
+    } );
+  } );
+
 } );
