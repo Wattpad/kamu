@@ -11,37 +11,14 @@ set :keep_releases, 5
 set :aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']
 set :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
 
-
-desc "Function to get ec2 servers for a given role and tier"
-def get_ec2_servers(cap_role, tier, role, main=nil, ec2_region='us-east-1')
-  instances = get_ec2_running(ec2_region).with_tag('role', role).with_tag('tier', tier)
-  puts "Looking for #{cap_role} servers..."
-  if (main != nil) then
-    instances = instances.tagged('main')
-  end
-  puts "Found #{instances.count}"
-  instances.each do |instance|
-    # server instance.private_dns_name, cap_role
-    server instance.public_dns_name, cap_role
-  end
+role :kamu do
+  logger.info("Fetching instance addresses from EC2...")
+  AWS::EC2.new(:region => 'us-east-1').instances
+    .filter('instance-state-name', 'running')
+    .filter('tag:tier', 'production')
+    .filter('tag:role', 'kamu')
+    .map { |instance| instance.public_dns_name }
 end
-
-desc "Function to get all EC2 running hosts"
-def get_ec2_running(ec2_region='us-east-1')
-  AWS.config(
-    :access_key_id => aws_access_key_id,
-    :secret_access_key => aws_secret_access_key,
-  )
-  AWS.start_memoizing
-  if @ec2_running_instances.nil?
-    puts "Looking for running servers in #{ec2_region}..."
-    @ec2_running_instances = AWS::EC2.new(:region => ec2_region).instances.filter('instance-state-name', 'running')
-    puts "Found #{@ec2_running_instances.count}"
-  end
-  return @ec2_running_instances
-end
-
-get_ec2_servers(:kamu, 'production', 'kamu')
 
 task :set_git_ssh do
   default_environment[:GIT_SSH] = '/root/ssh-git.sh'
