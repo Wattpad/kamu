@@ -2,6 +2,7 @@
 
 // built-in/third-party modules
 var QueryString = require( 'querystring' ),
+            fs  = require('fs'),
     _           = require( 'lodash' );
 
 // custom modules
@@ -9,14 +10,17 @@ var config      = require( '../config' ),
     log         = require( '../log' ),
     connStatus  = require( '../connection' );
 
+// Placeholder image to show when 404
+var placeholderImage = fs.readFileSync( __dirname + '/../../placeholders/404.jpg' );
+
 /*
  * write the error response headers
  *
  * @param     res           object        response object
  * @param     statusCode    integer       numeric response code to write
  */
-var writeErrorHead = function( res, statusCode ) {
-  res.writeHead( statusCode, {
+var writeHeadersWithStatusAndContentType = function( res, statusCode, contentType ) {
+  var headers = {
     'expires': '0',
     'Cache-Control': 'no-cache, no-store, private, must-revalidate',
     'X-Frame-Options': config.defaultHeaders[ 'X-Frame-Options' ],
@@ -24,11 +28,17 @@ var writeErrorHead = function( res, statusCode ) {
     'X-Content-Type-Options': config.defaultHeaders[ 'X-Content-Type-Options' ],
     'Content-Security-Policy': config.defaultHeaders[ 'Content-Security-Policy' ],
     'Strict-Transport-Security': config.defaultHeaders[ 'Strict-Transport-Security' ]
-  } );
+  };
+
+  if ( contentType ) {
+    headers[ 'Content-Type' ] = contentType;
+  }
+
+  res.writeHead( statusCode, headers );
 };
 
 /*
- * respond with a 404 response
+ * for backwards compatibility with legacy clients, respond with a placeholder image instead of a normal 404 response
  *
  * @param   object    res     http response object
  * @param   string    msg     404 message string
@@ -36,8 +46,9 @@ var writeErrorHead = function( res, statusCode ) {
  */
 var fourOhFour = function( res, msg, url ) {
   log.warn( msg + ': ' + ( ( url != null ? url.format() : void 0 ) || 'unknown' ) );
-  writeErrorHead( res, 404 );
-  return finish( res, 'Not Found' );
+
+  writeHeadersWithStatusAndContentType( res, 200, 'image/jpeg' );
+  finish( res, placeholderImage );
 };
 module.exports.fourOhFour = fourOhFour;
 
@@ -51,7 +62,7 @@ module.exports.fourOhFour = fourOhFour;
  */
 var fiveHundred = function( res, msg, url, err ) {
   log.error( msg + ': ' + ( ( url != null ? url.format() : void 0 ) || 'unknown' ), err );
-  writeErrorHead( res, 500 );
+  writeHeadersWithStatusAndContentType( res, 500 );
   return finish( res, 'Internal Error' );
 };
 module.exports.fiveHundred = fiveHundred;
