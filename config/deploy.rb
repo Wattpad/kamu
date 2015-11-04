@@ -14,7 +14,7 @@ set :remote_deploy_dir,  "/home/ubuntu/repos/#{application}"
 set :remote_deploy_aws_profile, 'web-deploy'
 set :aws_config, AWS::Core::Configuration.new({region: 'us-east-1'})
 
-default_environment[:GIT_SSH] = '/home/ubuntu/ssh-git.sh'
+default_environment[:GIT_SSH] = '/root/ssh-git.sh'
 
 role :app do
   logger.info("Fetching instance addresses from EC2...")
