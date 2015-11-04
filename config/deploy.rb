@@ -8,31 +8,34 @@ set :repository,  "git@github.com:Wattpad/kamu.git"
 set :scm, :git
 set :user, "root"
 set :keep_releases, 5
-set :aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']
-set :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
+
+set :remote_deploy_host, "wattpad.com"
+set :remote_deploy_dir,  "/home/ubuntu/repos/#{application}"
+set :remote_deploy_aws_profile, 'web-deploy'
+set :aws_config, AWS::Core::Configuration.new({region: 'us-east-1'})
+
+default_environment[:GIT_SSH] = '/home/ubuntu/ssh-git.sh'
 
 role :app do
   logger.info("Fetching instance addresses from EC2...")
-  AWS::EC2.new(:region => 'us-east-1').instances
+  AWS::EC2.new(config: aws_config).instances
     .filter('instance-state-name', 'running')
     .filter('tag:tier', 'production')
     .filter('tag:role', 'kamu')
     .map { |instance| instance.public_dns_name }
 end
 
-task :set_git_ssh do
-  default_environment[:GIT_SSH] = '/root/ssh-git.sh'
-end
-
 desc "Performs a deploy remotely from the jump server"
-task :remote_deploy, :hosts => "wattpad.com" do
+task :remote_deploy, :hosts => remote_deploy_host do
   # clear role to avoid EC2 API lookups from local machine
   roles[:app].clear
   # use system default ssh with agent forwarding
   default_environment.delete(:GIT_SSH)
   ssh_options[:forward_agent] = true
   set :user, "ubuntu"
-  run "ssh-agent bash -c 'ssh-add /home/ubuntu/.ssh/kamu; cd /home/ubuntu/kamu; git checkout .; git clean -f; git pull origin master; cap load_local_aws_credentials deploy'"
+
+  run "cd #{remote_deploy_dir} && git fetch origin && git clean -f && git reset --hard origin/master"
+  run "ssh-agent bash -c 'ssh-add ; cd #{remote_deploy_dir}; cap load_local_aws_credentials deploy'"
 end
 
 desc "Loads aws credentials from local file"
@@ -125,7 +128,6 @@ namespace :docker do
 
 end
 
-before "deploy", "set_git_ssh"
 after "deploy:update_code", "docker:update"
 after "deploy:update", "docker:switch_over"
 after "deploy", "deploy:cleanup", 'docker:tail_logs'
