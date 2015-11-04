@@ -25,7 +25,7 @@ describe( 'utils index', function() {
     } );
   } );
 
-  describe( '#writeErrorHead', function() {
+  describe( '#writeHeadersWithStatusAndContentType', function() {
     var res;
 
     before( function() {
@@ -36,30 +36,30 @@ describe( 'utils index', function() {
 
     it( 'should write the response header', function() {
       res.writeHead.reset();
-      utils.__get__( 'writeErrorHead' )( res, 200 );
+      utils.__get__( 'writeHeadersWithStatusAndContentType' )( res, 200 );
       expect( res.writeHead ).to.have.been.calledOnce;
     } );
 
     it( 'should pass the informed status code when writting response header', function() {
       res.writeHead.reset();
-      utils.__get__( 'writeErrorHead' )( res, 200 );
+      utils.__get__( 'writeHeadersWithStatusAndContentType' )( res, 200 );
       expect( res.writeHead.getCall( 0 ).args[ 0 ] ).to.be.equal( 200 );
     } );
   } );
 
   describe( '#fourOhFour', function() {
-    var revertWriteErrorHead,
+    var revertWriteHeadersWithStatusAndContentType,
         revertFinish,
-        stubWriteErrorHead,
+        stubWriteHeadersWithStatusAndContentType,
         stubFinish,
         res,
         msg,
         url;
 
     before( function() {
-      stubWriteErrorHead = sinon.stub();
+      stubWriteHeadersWithStatusAndContentType = sinon.stub();
       stubFinish = sinon.stub();
-      revertWriteErrorHead = utils.__set__( 'writeErrorHead', stubWriteErrorHead );
+      revertWriteHeadersWithStatusAndContentType = utils.__set__( 'writeHeadersWithStatusAndContentType', stubWriteHeadersWithStatusAndContentType );
       revertFinish = utils.__set__( 'finish', stubFinish );
 
       res = {};
@@ -68,7 +68,7 @@ describe( 'utils index', function() {
     } );
 
     after( function() {
-      revertWriteErrorHead();
+      revertWriteHeadersWithStatusAndContentType();
       revertFinish();
     } );
 
@@ -78,11 +78,12 @@ describe( 'utils index', function() {
       expect( utils.__get__( 'log' ).warn ).to.have.been.calledOnce;
     } );
 
-    it( 'should write a 404 response', function() {
-      utils.__get__( 'writeErrorHead' ).reset();
+    it( 'should write a placeholder image', function() {
+      utils.__get__( 'writeHeadersWithStatusAndContentType' ).reset();
       utils.fourOhFour( res, msg, url );
-      expect( utils.__get__( 'writeErrorHead' ) ).to.have.been.calledOnce;
-      expect( utils.__get__( 'writeErrorHead' ).getCall( 0 ).args [1 ] ).to.be.equal( 404 );
+      expect( utils.__get__( 'writeHeadersWithStatusAndContentType' ) ).to.have.been.calledOnce;
+      expect( utils.__get__( 'writeHeadersWithStatusAndContentType' ).getCall( 0 ).args [1 ] ).to.be.equal( 200 );
+      expect( utils.__get__( 'writeHeadersWithStatusAndContentType' ).getCall( 0 ).args [2 ] ).to.be.equal( 'image/jpeg' );
     } );
 
     it( 'should finish the response', function() {
@@ -94,18 +95,18 @@ describe( 'utils index', function() {
   } );
 
   describe( '#fiveHundred', function() {
-    var revertWriteErrorHead,
+    var revertWriteHeadersWithStatusAndContentType,
         revertFinish,
-        stubWriteErrorHead,
+        stubWriteHeadersWithStatusAndContentType,
         stubFinish,
         res,
         msg,
         url;
 
     before( function() {
-      stubWriteErrorHead = sinon.stub();
+      stubWriteHeadersWithStatusAndContentType = sinon.stub();
       stubFinish = sinon.stub();
-      revertWriteErrorHead = utils.__set__( 'writeErrorHead', stubWriteErrorHead );
+      revertWriteHeadersWithStatusAndContentType = utils.__set__( 'writeHeadersWithStatusAndContentType', stubWriteHeadersWithStatusAndContentType );
       revertFinish = utils.__set__( 'finish', stubFinish );
 
       res = {};
@@ -114,7 +115,7 @@ describe( 'utils index', function() {
     } );
 
     after( function() {
-      revertWriteErrorHead();
+      revertWriteHeadersWithStatusAndContentType();
       revertFinish();
     } );
 
@@ -125,10 +126,10 @@ describe( 'utils index', function() {
     } );
 
     it( 'should write the 500 response', function() {
-      utils.__get__( 'writeErrorHead' ).reset();
+      utils.__get__( 'writeHeadersWithStatusAndContentType' ).reset();
       utils.fiveHundred( res, msg, url );
-      expect( utils.__get__( 'writeErrorHead' ) ).to.have.been.calledOnce;
-      expect( utils.__get__( 'writeErrorHead' ).getCall( 0 ).args [1 ] ).to.be.equal( 500 );
+      expect( utils.__get__( 'writeHeadersWithStatusAndContentType' ) ).to.have.been.calledOnce;
+      expect( utils.__get__( 'writeHeadersWithStatusAndContentType' ).getCall( 0 ).args [1 ] ).to.be.equal( 500 );
     } );
 
     it( 'should finish the response', function() {
