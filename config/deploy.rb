@@ -11,7 +11,7 @@ set :keep_releases, 5
 set :aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']
 set :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
 
-role :kamu do
+role :app do
   logger.info("Fetching instance addresses from EC2...")
   AWS::EC2.new(:region => 'us-east-1').instances
     .filter('instance-state-name', 'running')
@@ -26,8 +26,20 @@ end
 
 desc "Performs a deploy remotely from the jump server"
 task :remote_deploy, :hosts => "wattpad.com" do
+  # clear role to avoid EC2 API lookups from local machine
+  roles[:app].clear
+  # use system default ssh with agent forwarding
+  default_environment.delete(:GIT_SSH)
+  ssh_options[:forward_agent] = true
   set :user, "ubuntu"
-  run "ssh-agent bash -c 'ssh-add /home/ubuntu/.ssh/kamu; cd /home/ubuntu/kamu; git checkout .; git clean -f; git pull origin master; cap deploy'"
+  run "ssh-agent bash -c 'ssh-add /home/ubuntu/.ssh/kamu; cd /home/ubuntu/kamu; git checkout .; git clean -f; git pull origin master; cap load_local_aws_credentials deploy'"
+end
+
+desc "Loads aws credentials from local file"
+task :load_local_aws_credentials do
+  set :aws_config, aws_config.with(credential_provider:
+    AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(profile_name: remote_deploy_aws_profile)
+  )
 end
 
 namespace :docker do
