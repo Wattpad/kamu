@@ -1,5 +1,5 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: kamu
@@ -7,13 +7,13 @@ spec:
   strategy:
     rollingUpdate:
       maxUnavailable: 0
+  revisionHistoryLimit: 1
   template:
     metadata:
       labels:
         app: kamu
         env: prod
     spec:
-      revisionHistoryLimit: 1
       containers:
       - name: kamu
         # rendered by kube-deploy
