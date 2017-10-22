@@ -7,5 +7,5 @@ RUN npm install
 RUN npm install -g pm2
 
 EXPOSE 8081
-CMD ["pm2", "start", "/opt/kamu/index.js", "-i", "0", "--no-daemon", "--no-color"]
+CMD ["pm2-docker", "-i", "8", "/opt/kamu/index.js"]
 
