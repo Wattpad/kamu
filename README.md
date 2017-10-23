@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/marcos-abreu/kamu.svg?branch=master)](https://travis-ci.org/marcos-abreu/kamu)
+[![Build Status](https://travis-ci.org/Wattpad/kamu.svg?branch=master)](https://travis-ci.org/Wattpad/kamu)
 
 ## Kamu - (SSL) Asset Proxy
 
@@ -37,9 +37,7 @@ ___
 
 In order to properly deploy your **kamu** proxy server follow these steps:
 
-* **Step 1** - clone the latest **Kamu** tag into your host server, and install nodejs dependencies (`npm install`)
-* **Step 2** - configure your HTTP Server to set the appropriate environment variables
-* **Setp 3** - configure your server to start **Kamu** nodejs app and point your HTTP Server to it
+Merge to master: TravisCI and kube-deploy will take care of the rest.
 
 ### Serving Assets Through SSL
 ___
