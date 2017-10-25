@@ -1,5 +1,5 @@
 ---
-apiVersion: apps/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: kamu
@@ -70,4 +70,3 @@ spec:
     apiVersion: autoscaling/v1
     kind: Deployment
     name: kamu
-
