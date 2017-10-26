@@ -20,11 +20,11 @@ spec:
         image: {{.Image}}
         resources:
           requests:
-            memory: "2Gi"
-            cpu: "1000m"
+            memory: "20Gi"
+            cpu: "23700m"
           limits:
-            memory: "2Gi"
-            cpu: "1000m"
+            memory: "20Gi"
+            cpu: "23700m"
         ports:
           - containerPort: 8081
             name: http
@@ -63,11 +63,10 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: kamu
 spec:
-  targetCPUUtilizationPercentage: 40
-  minReplicas: 20
+  targetCPUUtilizationPercentage: 50
+  minReplicas: 4
   maxReplicas: 50
   scaleTargetRef:
     apiVersion: autoscaling/v1
     kind: Deployment
     name: kamu
-
