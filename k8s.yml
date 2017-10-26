@@ -21,10 +21,10 @@ spec:
         resources:
           requests:
             memory: "20Gi"
-            cpu: "25600m"
+            cpu: "23700m"
           limits:
             memory: "20Gi"
-            cpu: "25600m"
+            cpu: "23700m"
         ports:
           - containerPort: 8081
             name: http
@@ -70,4 +70,3 @@ spec:
     apiVersion: autoscaling/v1
     kind: Deployment
     name: kamu
-
