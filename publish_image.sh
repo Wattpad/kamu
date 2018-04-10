@@ -5,7 +5,7 @@ if [ "$TRAVIS_BRANCH $TRAVIS_PULL_REQUEST" == "master false" ]; then
 
   pip install --user awscli
   export PATH=$PATH:$HOME/.local/bin
-  eval $(aws ecr get-login --region us-east-1)
+  eval $(aws ecr get-login --no-include-email --region us-east-1)
 
   export GIT_REVISION=$(git rev-parse HEAD)
   export REPO="723255503624.dkr.ecr.us-east-1.amazonaws.com/kamu"
