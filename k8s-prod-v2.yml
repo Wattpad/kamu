@@ -21,10 +21,10 @@ spec:
         resources:
           requests:
             memory: "40Gi"
-            cpu: "55000m"
+            cpu: "33500m"
           limits:
             memory: "40Gi"
-            cpu: "55000m"
+            cpu: "33500m"
         ports:
           - containerPort: 8081
             name: http
