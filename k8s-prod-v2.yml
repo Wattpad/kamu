@@ -20,11 +20,11 @@ spec:
         image: {{.Image}}
         resources:
           requests:
-            memory: "20Gi"
-            cpu: "10"
+            memory: "40Gi"
+            cpu: "33500m"
           limits:
-            memory: "25Gi"
-            cpu: "15"
+            memory: "40Gi"
+            cpu: "33500m"
         ports:
           - containerPort: 8081
             name: http
