@@ -67,6 +67,6 @@ spec:
   minReplicas: 4
   maxReplicas: 50
   scaleTargetRef:
-    apiVersion: autoscaling/v1
+    apiVersion: apps/v1
     kind: Deployment
     name: kamu
