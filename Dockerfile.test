@@ -1,6 +1,6 @@
 FROM kamu:base
 
 RUN npm install --only=dev
-RUN npm install gulp
+RUN npm install gulp@3.9.1
 CMD ["npm", "test"]
 
