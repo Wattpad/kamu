@@ -14,7 +14,7 @@ connStatus.start();
 var server = Http.createServer( function( req, res ) {
   // only get requests with a url pathname
   if ( req.method !== 'GET' || req.url === '/' ) {
-    res.writeHead( 301, {...config.defaultHeaders, 'Location': 'https://www.wattpad.com'});
+    res.writeHead( 301, { ...config.defaultHeaders, 'Location': 'https://www.wattpad.com' });
     return res.end();
   }
   // favicon requests will get a straight response
