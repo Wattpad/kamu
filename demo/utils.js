@@ -21,6 +21,6 @@ exports.proxyUrl = function(url) {
 
   hmacDigest = hmac.digest('hex');
 
-  urlDigest = new Buffer(url).toString('hex');
+  urlDigest = new Buffer.from(url).toString('hex');
   return config.host + '/' + hmacDigest + '/' + urlDigest;
 };

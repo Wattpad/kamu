@@ -63,7 +63,7 @@ describe( 'schema', function() {
     describe( 'when successifully decoded string', function() {
       it( 'should return the decoded string', function() {
         var result = schema.decodeUrl( 'ffaa0099' );
-        expect( result ).to.be.equal( new Buffer( 'ffaa0099', 'hex' ).toString() );
+        expect( result ).to.be.equal( new Buffer.from( 'ffaa0099', 'hex' ).toString() );
       } );
     } );
 
