@@ -26,7 +26,6 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
-    "gulp": "^3.9.1",
     "gulp-mocha": "^2.1.1",
     "gulp-plumber": "^1.0.1",
     "rewire": "^2.3.4",
@@ -37,9 +36,6 @@
   },
   "dependencies": {
     "lodash": "4.17.4",
-    "sharp": "^0.32.1"
-  },
-  "overrides": {
-    "graceful-fs": "^4.2.11"
+    "sharp": "^0.18.4"
   }
 }

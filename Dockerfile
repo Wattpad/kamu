@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:8.7.0
 
 ADD . /opt/kamu
 WORKDIR /opt/kamu

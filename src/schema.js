@@ -16,7 +16,7 @@ var decodeUrl = function( str ) {
 
   if ( str && str.length > 0 && str.length % 2 === 0 && !str.match( /[^0-9a-f]/ ) ) {
     try {
-      return new Buffer.from( str, 'hex' ).toString();
+      return new Buffer( str, 'hex' ).toString();
     }
     catch( err ) {
       log.warn( 'error decoding url: ' + str );
