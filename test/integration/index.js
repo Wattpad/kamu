@@ -23,6 +23,7 @@ var proxyPath = function( externalUrl ) {
 describe( 'app integration ->', function() {
   var req,
       reqOptions;
+  const REDIRECT_URL = "https://www.wattpad.com";
 
   before( function( done ) {
     server = require( '../../index' );
@@ -50,21 +51,19 @@ describe( 'app integration ->', function() {
       reqOptions.method = bkpMethod;
     } );
 
-    it( 'should return a 200 response', function( done ) {
+    it( 'should return a 301 response', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        expect( res.statusCode ).to.be.equal( 200 );
+        expect( res.statusCode ).to.be.equal( 301 );
         done();
       } );
       req.end(); // necessary when using http.request
     } );
 
-    it( 'should only contain the string `hwhat` as the body', function( done ) {
+    it( 'should redirect to wattpad.com', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        res.setEncoding( 'utf8' ); // necessary to read data as plain text
-        res.on( 'data', function( body ) {
-          expect( body ).to.contain( 'hwhat' );
-          done();
-        } );
+        expect( res.statusCode ).to.be.equal( 301 );
+        expect( res.headers[ 'location' ] ).to.be.equal( REDIRECT_URL );
+        done();
       } );
       req.end(); // necessary when using http.request
     } );
@@ -82,21 +81,19 @@ describe( 'app integration ->', function() {
       reqOptions.method = bkpMethod;
     } );
 
-    it( 'should return a 200 response', function( done ) {
+    it( 'should return a 301 response', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        expect( res.statusCode ).to.be.equal( 200 );
+        expect( res.statusCode ).to.be.equal( 301 );
         done();
       } );
       req.end(); // necessary when using http.request
     } );
 
-    it( 'should only contain the string `hwhat` as the body', function( done ) {
+    it( 'should redirect to wattpad.com', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        res.setEncoding( 'utf8' ); // necessary to read data as plain text
-        res.on( 'data', function( body ) {
-          expect( body ).to.contain( 'hwhat' );
-          done();
-        } );
+        expect( res.statusCode ).to.be.equal( 301 );
+        expect( res.headers[ 'location' ] ).to.be.equal( REDIRECT_URL );
+        done();
       } );
       req.end(); // necessary when using http.request
     } );
@@ -114,21 +111,19 @@ describe( 'app integration ->', function() {
       reqOptions.method = bkpMethod;
     } );
 
-    it( 'should return a 200 response', function( done ) {
+    it( 'should return a 301 response', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        expect( res.statusCode ).to.be.equal( 200 );
+        expect( res.statusCode ).to.be.equal( 301 );
         done();
       } );
       req.end(); // necessary when using http.request
     } );
 
-    it( 'should only contain the string `hwhat` as the body', function( done ) {
+    it( 'should redirect to wattpad.com', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        res.setEncoding( 'utf8' ); // necessary to read data as plain text
-        res.on( 'data', function( body ) {
-          expect( body ).to.contain( 'hwhat' );
-          done();
-        } );
+        expect( res.statusCode ).to.be.equal( 301 );
+        expect( res.headers[ 'location' ] ).to.be.equal( REDIRECT_URL );
+        done();
       } );
       req.end(); // necessary when using http.request
     } );
@@ -146,9 +141,9 @@ describe( 'app integration ->', function() {
       reqOptions.method = bkpMethod;
     } );
 
-    it( 'should return a 200 response', function( done ) {
+    it( 'should return a 301 response', function( done ) {
       req = http.request( reqOptions, function( res ) {
-        expect( res.statusCode ).to.be.equal( 200 );
+        expect( res.statusCode ).to.be.equal( 301 );
         done();
       } );
       req.end(); // necessary when using http.request
