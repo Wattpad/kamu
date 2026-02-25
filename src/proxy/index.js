@@ -3,7 +3,6 @@
 // built-in/third-party modules
 var Http        = require( 'http' ),
     Https       = require( 'https' ),
-    Url         = require( 'url' ),
     _           = require( 'lodash' );
 
 // custom modules
@@ -79,7 +78,7 @@ var processUrl = function( url, mediaHeaders, res, options ) {
         } );
 
         if ( res._media.pendingTransform ) {
-          transformer = transform.getTransformer( res, mediaRes, options.transform, options.reqUrl, url.format() );
+          transformer = transform.getTransformer( res, mediaRes, options.transform, options.reqUrl, url.href );
         }
 
         newHeaders = {
@@ -142,12 +141,12 @@ var processUrl = function( url, mediaHeaders, res, options ) {
             else {
               res._media.finished = false;
 
-              newUrl = Url.parse( mediaRes.headers[ 'location' ] );
-              if ( !( ( newUrl.host != null ) && ( newUrl.hostname != null ) ) ) {
-                newUrl.host = newUrl.hostname = url.hostname;
-                newUrl.protocol = url.protocol;
+              try {
+                newUrl = new URL( mediaRes.headers[ 'location' ], url.href );
+              } catch (e) {
+                return utils.fourOhFour( res, 'Invalid redirect location', url );
               }
-              log.debug( 'Redirected to ' + ( newUrl.format() ) );
+              log.debug( 'Redirected to ' + newUrl.href );
               redirectOptions = _.clone( options );
               redirectOptions.redirects = redirectsLeft - 1;
               return processUrl( newUrl, mediaHeaders, res, redirectOptions );

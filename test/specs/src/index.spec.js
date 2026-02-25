@@ -12,6 +12,7 @@ describe( 'app index', function() {
     config = require( '../../../src/config' );
 
     fakeReq = {
+      'url': '/encoded-key/encoded-url',
       'headers': {
         'SomeHeaderKey': 'SomeHeaderValue'
       }
@@ -27,16 +28,6 @@ describe( 'app index', function() {
           'digest'        : sinon.stub().returns( 'encoded-key' )
         } )
       },
-      'Url'           : {
-        'parse'         : sinon.stub().returns( {
-          'host':     'www.some-domain.com',
-          'hostname': 'www.some-domain.com',
-          'pathname': '/encoded-key/encoded-url',
-          'protocol': 'http:',
-          'port': 80,
-          'format': function(){}
-        } )
-      },
       'log'           : {
         'debug'         : function(){},
         'warn'          : function(){},
@@ -47,7 +38,7 @@ describe( 'app index', function() {
         'parseQS'       : sinon.stub()
       },
       'schema'        : {
-        'decodeUrl'     : sinon.stub().returns( 'decoded-url' )
+        'decodeUrl'     : sinon.stub().returns( 'http://decoded-url.com/image.jpg' )
       },
       'proxy'         : {
         'processUrl'    : sinon.stub()
@@ -75,7 +66,6 @@ describe( 'app index', function() {
 
     describe( 'when failing to decode from url', function() {
       var bkpDecodeUrl,
-          newUrlParse,
           bkpPathname,
           bkpGetQS;
 
@@ -83,10 +73,8 @@ describe( 'app index', function() {
         bkpDecodeUrl = index.__get__( 'schema' ).decodeUrl();
         index.__get__( 'schema' ).decodeUrl.returns( void 0 );
 
-        newUrlParse = index.__get__( 'Url' ).parse();
-        bkpPathname = newUrlParse.pathname;
-        newUrlParse.pathname = '/encoded-key?url=encoded-url-from-qs';
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        bkpPathname = fakeReq.url;
+        fakeReq.url = '/encoded-key?url=encoded-url-from-qs';
 
         bkpGetQS = index.__get__( 'utils' ).getQS();
         index.__get__( 'utils' ).getQS.returns( {
@@ -96,8 +84,7 @@ describe( 'app index', function() {
 
       after( function() {
         index.__get__( 'schema' ).decodeUrl.returns( bkpDecodeUrl );
-        newUrlParse.pathname = bkpPathname;
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        fakeReq.url = bkpPathname;
         index.__get__( 'utils' ).getQS.returns( bkpGetQS );
       } );
 
@@ -111,7 +98,6 @@ describe( 'app index', function() {
 
     describe( 'when failing to decode media from url and querystring', function() {
       var bkpDecodeUrl,
-          newUrlParse,
           bkpPathname,
           bkpGetQS;
 
@@ -119,10 +105,8 @@ describe( 'app index', function() {
         bkpDecodeUrl = index.__get__( 'schema' ).decodeUrl();
         index.__get__( 'schema' ).decodeUrl.returns( void 0 );
 
-        newUrlParse = index.__get__( 'Url' ).parse();
-        bkpPathname = newUrlParse.pathname;
-        newUrlParse.pathname = '/encoded-key';
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        bkpPathname = fakeReq.url;
+        fakeReq.url = '/encoded-key';
 
         bkpGetQS = index.__get__( 'utils' ).getQS();
         index.__get__( 'utils' ).getQS.returns( {} );
@@ -130,8 +114,7 @@ describe( 'app index', function() {
 
       after( function() {
         index.__get__( 'schema' ).decodeUrl.returns( bkpDecodeUrl );
-        newUrlParse.pathname = bkpPathname;
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        fakeReq.url = bkpPathname;
         index.__get__( 'utils' ).getQS.returns( bkpGetQS );
       } );
 
@@ -148,15 +131,12 @@ describe( 'app index', function() {
           bkpPathname;
 
       before( function() {
-        newUrlParse = index.__get__( 'Url' ).parse();
-        bkpPathname = newUrlParse.pathname;
-        newUrlParse.pathname = '/encoded-key/encoded-url/transform_options';
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        bkpPathname = fakeReq.url;
+        fakeReq.url = '/encoded-key/encoded-url/transform_options';
       } );
 
       after( function() {
-        newUrlParse.pathname = bkpPathname;
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        fakeReq.url = bkpPathname;
       } );
 
       it( 'should try to parse transform options from url', function() {
@@ -173,10 +153,8 @@ describe( 'app index', function() {
           bkpGetQS;
 
       before( function() {
-        newUrlParse = index.__get__( 'Url' ).parse();
-        bkpPathname = newUrlParse.pathname;
-        newUrlParse.pathname = '/encoded-key/encoded-url';
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        bkpPathname = fakeReq.url;
+        fakeReq.url = '/encoded-key/encoded-url';
 
         bkpGetQS = index.__get__( 'utils' ).getQS();
         index.__get__( 'utils' ).getQS.returns( {
@@ -185,8 +163,7 @@ describe( 'app index', function() {
       } );
 
       after( function() {
-        newUrlParse.pathname = bkpPathname;
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        fakeReq.url = bkpPathname;
         index.__get__( 'utils' ).getQS.returns( bkpGetQS );
       } );
 
@@ -220,15 +197,12 @@ describe( 'app index', function() {
           bkpPathname;
 
       before( function() {
-        newUrlParse = index.__get__( 'Url' ).parse();
-        bkpPathname = newUrlParse.pathname;
-        newUrlParse.pathname = '//encoded-url';
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        bkpPathname = fakeReq.url;
+        fakeReq.url = '//encoded-url';
       } );
 
       after( function() {
-        newUrlParse.pathname = bkpPathname;
-        index.__get__( 'Url' ).parse.returns( newUrlParse );
+        fakeReq.url = bkpPathname;
       } );
 
       it( 'should return not found', function() {

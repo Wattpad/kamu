@@ -2,8 +2,6 @@
 
 require( '../../../common' );
 
-var Url = require( 'url' );
-
 describe( 'utils index', function() {
   var utils;
 
@@ -64,7 +62,7 @@ describe( 'utils index', function() {
 
       res = {};
       msg = 'not found message';
-      url = Url.parse( 'http://some-host.com/path/to/image.jpg' );
+      url = new URL( 'http://some-host.com/path/to/image.jpg' );
     } );
 
     after( function() {
@@ -111,7 +109,7 @@ describe( 'utils index', function() {
 
       res = {};
       msg = 'not found message';
-      url = Url.parse( 'http://some-host.com/path/to/image.jpg' );
+      url = new URL( 'http://some-host.com/path/to/image.jpg' );
     } );
 
     after( function() {
@@ -222,14 +220,14 @@ describe( 'utils index', function() {
 
     describe( 'when url is informed, but no query or search available', function() {
       it( 'should return undefined', function() {
-        var result = utils.getQS( Url.parse( 'http://some-host.com/path/to/image.jpg' ) );
+        var result = utils.getQS( new URL( 'http://some-host.com/path/to/image.jpg' ) );
         expect( result ).to.be.undefined;
       } );
     } );
 
     describe( 'when url is informed with either a query or search property', function() {
       it( 'should parse it into an object and return it', function() {
-        var result = utils.getQS( Url.parse( 'http://some-host.com/path/to/image.jpg?key=val&key2=val2' ) );
+        var result = utils.getQS( new URL( 'http://some-host.com/path/to/image.jpg?key=val&key2=val2' ) );
         expect( result ).not.to.be.undefined;
         expect( result ).to.contain.keys( [ 'key', 'key2' ] );
       } );

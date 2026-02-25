@@ -1,8 +1,7 @@
 'use strict';
 
 // built-in/third-party modules
-var Url         = require( 'url' ),
-    _           = require( 'lodash' );
+var _           = require( 'lodash' );
 
 // custom modules
 var config      = require( '../config' ),
@@ -199,12 +198,12 @@ var getTransformer = function( res, mediaRes, options, reqUrl, mediaUrl ) {
         // only log if redirect on error is set, otherwise let the fiveHundred logs the error
         log.error( 'failed transforming image', errorObj );
 
-        var redirectUrl = Url.parse( reqUrl, true );
+        var isAbsolute = /^https?:\/\//i.test(reqUrl);
+        var redirectUrl = new URL( reqUrl, 'http://localhost' );
 
         // remove any transform information from the url
-        redirectUrl.search = '';
         for ( var i = 0, j = config.transformOptions.length; i < j; i++ ) {
-          delete redirectUrl.query[ config.transformOptions[ i ] ];
+          redirectUrl.searchParams.delete( config.transformOptions[ i ] );
         }
         var redirectPath = redirectUrl.pathname.split( '/' );
         if ( redirectPath.length > 3 ) { // 3 === leading slash and two paramenters
@@ -212,14 +211,16 @@ var getTransformer = function( res, mediaRes, options, reqUrl, mediaUrl ) {
         }
         redirectUrl.pathname = redirectPath.join( '/' );
 
+        var loc = isAbsolute ? redirectUrl.href : redirectUrl.pathname + redirectUrl.search + redirectUrl.hash;
+
         // redirect the request
         res.writeHead( 302, {
-          'Location': redirectUrl.format()
+          'Location': loc
         } );
         return utils.finish( res );
       }
       else {
-        return utils.fiveHundred( res, 'Failed transforming media', Url.parse( mediaUrl ), errorObj );
+        return utils.fiveHundred( res, 'Failed transforming media', new URL( mediaUrl, 'http://localhost' ), errorObj );
       }
     } );
   }
