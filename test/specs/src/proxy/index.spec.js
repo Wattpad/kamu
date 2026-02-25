@@ -2,8 +2,6 @@
 
 require( '../../../common' );
 
-var Url = require( 'url' );
-
 describe( 'proxy index', function() {
 
   var index,
@@ -33,15 +31,6 @@ describe( 'proxy index', function() {
       'Https'         : {
         'get'           : sinon.stub().returns( fakeProtocol )
       },
-      'Url'           : {
-        'parse'         : sinon.stub().returns( {
-          'host':     'www.some-domain.com',
-          'hostname': 'www.some-domain.com',
-          'protocol': 'http:',
-          'port': 80,
-          'format': function(){}
-        } )
-      },
       'log'           : {
         'debug'         : function(){},
         'error'         : sinon.stub(),
@@ -67,7 +56,7 @@ describe( 'proxy index', function() {
 
     before( function() {
       index.__get__( 'utils' ).fourOhFour.returns( 'return from fourOhFour' );
-      urlTest = Url.parse( 'http://www.some-domain.com/some/path' );
+      urlTest = new URL( 'http://www.some-domain.com/some/path' );
     } );
 
     after( function() {
@@ -75,15 +64,15 @@ describe( 'proxy index', function() {
     } );
 
     describe( 'when asset url host is NOT defined', function() {
-      var bkpHost;
+      var bkpUrlTest;
 
       before( function() {
-        bkpHost = urlTest.host;
-        urlTest.host = void 0;
+        bkpUrlTest = urlTest;
+        urlTest = { protocol: 'http:' };
       } );
 
       after( function() {
-        urlTest.host = bkpHost;
+        urlTest = bkpUrlTest;
       } );
 
       it( 'should respond with a 404', function() {
@@ -97,15 +86,15 @@ describe( 'proxy index', function() {
 
     describe( 'when asset url host is defined', function() {
       describe( 'with an INVALID protocol', function() {
-        var bkpProtocol;
+        var bkpUrlTest;
 
         before( function() {
-          bkpProtocol = urlTest.protocol;
-          urlTest.protocol = 'invalid';
+          bkpUrlTest = urlTest;
+          urlTest = { host: 'www.some-domain.com', protocol: 'invalid' };
         } );
 
         after( function() {
-          urlTest.protocol = bkpProtocol;
+          urlTest = bkpUrlTest;
         } );
 
         it( 'should return a 404 response', function() {
@@ -696,19 +685,15 @@ describe( 'proxy index', function() {
                 } );
 
                 describe( 'when the location does NOT have a host', function() {
-                  var bkpParse;
+                  var bkpLocation;
 
                   before( function() {
-                    bkpParse = index.__get__( 'Url' ).parse();
-                    index.__get__( 'Url' ).parse.returns( {
-                      'protocol': 'http:',
-                      'port': 80,
-                      'format': function(){}
-                    } );
+                    bkpLocation = fakeExternalResponse.headers.location;
+                    fakeExternalResponse.headers.location = '/some/path';
                   } );
 
                   after( function() {
-                    index.__get__( 'Url' ).parse.returns( bkpParse );
+                    fakeExternalResponse.headers.location = bkpLocation;
                   } );
 
                   it( 'should use the host of the current external request', function() {
@@ -722,19 +707,10 @@ describe( 'proxy index', function() {
                 describe( 'when the location does have a host', function() {
                   var bkpParse;
 
-                  before( function() {
-                    bkpParse = index.__get__( 'Url' ).parse();
-                    index.__get__( 'Url' ).parse.returns( {
-                      'host': 'new-domain.com',
-                      'hostname': 'new-domain.com',
-                      'protocol': 'http:',
-                      'port': 80,
-                      'format': function(){}
-                    } );
-                  } );
+                  before(function() { /* removed */ });
 
                   after( function() {
-                    index.__get__( 'Url' ).parse.returns( bkpParse );
+                    /* index.__get__('Url').parse.returns( bkpParse ); */
                   } );
 
                   it( 'should use received host', function() {
