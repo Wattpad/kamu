@@ -1,19 +1,17 @@
 FROM node:24
 
-RUN useradd -m --uid 999 --system wattpad
+# node https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user
+USER 1000
 
-ADD . /opt/kamu
+# Ensure /home/node exists and is owned by user 1000
+RUN mkdir -p /home/node && chown -R 1000:1000 /home/node
+
+COPY --chown=1000:1000 . /opt/kamu
 WORKDIR /opt/kamu
-ENV HOME=/home/wattpad
-RUN mkdir -p /home/wattpad/.pm2 && chown -R wattpad:wattpad /home/wattpad/.pm2
 RUN npm install sharp
 RUN npm install
-RUN npm install -g pm2
-
-RUN chown -R wattpad /opt/kamu
-
-USER 999
+RUN npm install pm2
 
 EXPOSE 8081
-CMD ["pm2-docker", "-i", "32", "/opt/kamu/index.js"]
+CMD ["/opt/kamu/node_modules/pm2/bin/pm2-docker", "-i", "32", "/opt/kamu/index.js"]
 
