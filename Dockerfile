@@ -4,9 +4,12 @@ RUN useradd -m --uid 999 --system wattpad
 
 ADD . /opt/kamu
 WORKDIR /opt/kamu
+ENV HOME=/home/wattpad
+RUN mkdir -p /home/wattpad/.pm2 && chown -R wattpad:wattpad /home/wattpad/.pm2
 RUN npm install sharp
 RUN npm install
 RUN npm install -g pm2
+
 RUN chown -R wattpad /opt/kamu
 
 USER 999
