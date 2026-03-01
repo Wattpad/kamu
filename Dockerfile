@@ -9,7 +9,7 @@ RUN npm install
 RUN npm install -g pm2
 RUN chown -R wattpad /opt/kamu
 
-USER wattpad
+USER 999
 
 EXPOSE 8081
 CMD ["pm2-docker", "-i", "32", "/opt/kamu/index.js"]
