@@ -49,8 +49,10 @@ var processUrl = function( url, mediaHeaders, res, options ) {
       // set the necessary flags
       res._media = res._media || {};
       res._media.finished = true;
+      const contentTypeHeader = (mediaRes.headers[ 'content-type' ] ?? "").split( ';' )[ 0 ].toLowerCase();
+
       res._media.pendingTransform = ( _.size( options.transform ) > 0 &&
-                                      config.transformTypes.indexOf( mediaRes.headers[ 'content-type' ].split( ';' )[ 0 ].toLowerCase() ) >= 0 )
+                                      config.transformTypes.indexOf( contentTypeHeader ) >= 0 )
       res._media.transformError = false;
 
       log.debug( 'media response flags', {
