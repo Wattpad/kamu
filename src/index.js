@@ -1,8 +1,7 @@
 'use strict';
 
 // built-in/third-party modules
-var Crypto      = require( 'crypto' ),
-    Url         = require( 'url' );
+var Crypto      = require( 'crypto' );
 
 // custom modules
 var config      = require( './config' ),
@@ -30,7 +29,7 @@ module.exports.processRequest = function( req, res ) {
       urlType,
       hmac;
 
-  url = Url.parse( req.url );
+  url = new URL( req.url, 'http://localhost' );
 
   mediaHeaders = {
     'Via': config.proxyAgent,
@@ -101,7 +100,7 @@ module.exports.processRequest = function( req, res ) {
     }
     signature = hmac.digest( 'hex' );
     if ( signature === reqSignature ) {
-      return proxy.processUrl( Url.parse( destUrl ), mediaHeaders, res, { 'redirects': config.maxRedirects, 'transform': mediaTransform, 'reqUrl': url.format() } );
+      return proxy.processUrl( new URL( destUrl ), mediaHeaders, res, { 'redirects': config.maxRedirects, 'transform': mediaTransform, 'reqUrl': req.url } );
     }
     else {
       return utils.fourOhFour( res, 'signature mismatch: ' + signature + ' | ' + reqSignature );

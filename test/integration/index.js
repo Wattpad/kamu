@@ -3,7 +3,6 @@
 require( '../common' );
 
 var http      = require( 'http' ),
-    Url       = require( 'url' ),
     fs        = require( 'fs' ),
     proxyUrl  = require( '../../demo/utils' ).proxyUrl,
     server;
@@ -16,8 +15,8 @@ var proxyPath = function( externalUrl ) {
   if ( externalUrl == null ) {
     return '';
   }
-  url = Url.parse( proxyUrl( externalUrl ) );
-  return url.path;
+  url = new URL( proxyUrl( externalUrl ) );
+  return url.pathname + url.search + url.hash;
 };
 
 describe( 'app integration ->', function() {

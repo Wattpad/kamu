@@ -45,7 +45,7 @@ var writeHeadersWithStatusAndContentType = function( res, statusCode, contentTyp
  * @param   object    url     url object
  */
 var fourOhFour = function( res, msg, url ) {
-  log.warn( msg + ': ' + ( ( url != null ? url.format() : void 0 ) || 'unknown' ) );
+  log.warn( msg + ': ' + ( ( url != null ? (url.href || (typeof url.format === 'function' ? url.format() : url.toString())) : void 0 ) || 'unknown' ) );
 
   writeHeadersWithStatusAndContentType( res, 200, 'image/jpeg' );
   finish( res, placeholderImage );
@@ -61,7 +61,7 @@ module.exports.fourOhFour = fourOhFour;
  * @param   object    err     error object to log
  */
 var fiveHundred = function( res, msg, url, err ) {
-  log.error( msg + ': ' + ( ( url != null ? url.format() : void 0 ) || 'unknown' ), err );
+  log.error( msg + ': ' + ( ( url != null ? (url.href || (typeof url.format === 'function' ? url.format() : url.toString())) : void 0 ) || 'unknown' ), err );
   writeHeadersWithStatusAndContentType( res, 500 );
   return finish( res, 'Internal Error' );
 };
@@ -100,7 +100,8 @@ var getQS = function( url ) {
     }
 
     if ( url.search && url.search !== '' ) {
-      return QueryString.parse( url.search );
+      var searchStr = url.search.charAt(0) === '?' ? url.search.substring(1) : url.search;
+      return QueryString.parse( searchStr );
     }
   }
 

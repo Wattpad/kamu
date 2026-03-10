@@ -2,8 +2,6 @@
 
 require( '../../../common' );
 
-var Url = require( 'url' );
-
 describe( 'proxy media', function() {
   var media;
 
@@ -31,7 +29,7 @@ describe( 'proxy media', function() {
         'headerKey' : 'headerValue'
       };
 
-      url = Url.parse( 'http://some-host.com/some/path/image.jpg' );
+      url = new URL( 'http://some-host.com/some/path/image.jpg' );
     } );
 
     afterEach( function() {
